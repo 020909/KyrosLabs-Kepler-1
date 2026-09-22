@@ -222,11 +222,11 @@ export default function HomePage() {
             <div className="absolute -inset-8 rounded-full bg-signal/10 blur-3xl" />
             <Image
               src="/brand/kepler-avatar.png"
-              alt="Kepler bat mascot"
+              alt="Kepler bat"
               width={480}
               height={480}
               priority
-              className="relative aspect-square w-full rounded-[8px] border border-white/10 object-cover"
+              className="relative aspect-square w-full object-contain"
             />
           </div>
         </div>

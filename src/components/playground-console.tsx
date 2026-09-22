@@ -169,7 +169,7 @@ export function PlaygroundConsole() {
             alt=""
             width={44}
             height={44}
-            className="size-11 rounded-[4px] object-cover"
+            className="size-11 object-contain"
           />
           <span className="type-mono-caption text-muted-foreground">
             kepler · playground · 1.2

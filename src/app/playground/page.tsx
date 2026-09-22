@@ -22,10 +22,10 @@ export default function PlaygroundPage() {
             <div className="flex items-center gap-4">
               <Image
                 src="/brand/kepler-avatar.png"
-                alt="Kepler avatar"
+                alt="Kepler bat"
                 width={112}
                 height={112}
-                className="size-28 rounded-[6px] border border-white/10 object-cover"
+                className="size-28 object-contain"
                 priority
               />
               <p className="type-mono-eyebrow text-signal">{siteConfig.product}</p>
