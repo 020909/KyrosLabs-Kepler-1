@@ -116,9 +116,9 @@ export function PlaygroundConsole() {
           <Image
             src="/brand/kepler-avatar.png"
             alt=""
-            width={22}
-            height={22}
-            className="size-[22px] rounded-[3px]"
+            width={44}
+            height={44}
+            className="size-11 rounded-[4px] object-cover"
           />
           <span className="type-mono-caption text-muted-foreground">
             kepler · playground · 1.1

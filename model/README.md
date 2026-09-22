@@ -1,31 +1,29 @@
-# Kepler 1.1 — free training pack
+# Kepler — free training pack
 
-## What this is
+## Cuts
 
-A **$0 Kaggle fine-tune** of open Laya into **Kepler 1.1**, specialised for:
-
-1. **Coding-agent tool gates** — allow / ask / deny for shell, files, network  
-2. **Secret tripwire** — detect credential leaks in tool calls  
-
-This is the viral first cut (not full Jev parity).
+| Version | Notebook | HF (when live) | Focus |
+|---|---|---|---|
+| **1.1** | `notebooks/kepler_1_1_kaggle.ipynb` | [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1) | Agent gates + secret tripwire |
+| **1.2** | `notebooks/kepler_1_2_kaggle.ipynb` | `MAKALY/kepler-1.2` | Jev-like System One (triage, mod, incident + gates) |
 
 ## Files
 
 | Path | Purpose |
 |---|---|
-| `model/notebooks/kepler_1_1_kaggle.ipynb` | Self-contained Kaggle notebook (Run All) |
-| `model/data/kepler_agent_gates.jsonl` | Same dataset checked into git for reference |
-| `model/scripts/train_kepler_ddp.py` | Trainer used inside the notebook |
-| `docs/KAGGLE_CLICK_BY_CLICK.md` | Non-technical run guide for Aly |
+| `model/notebooks/kepler_1_2_kaggle.ipynb` | **Next train** — Run All on Kaggle |
+| `model/scripts/build_kepler_1_2_notebook.py` | Regenerates the 1.2 notebook |
+| `model/cards/hf-README-1.2.md` | Paste onto HF after push |
+| `docs/KAGGLE_1_2_CLICK_BY_CLICK.md` | Non-technical run guide |
 
-## Your steps
+## Your steps (1.2)
 
-1. Follow [`docs/KAGGLE_CLICK_BY_CLICK.md`](../docs/KAGGLE_CLICK_BY_CLICK.md) *(done)*  
-2. Live weights: [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1)  
-3. Add license + model card: [`docs/HF_MODEL_CARD_CLICKS.md`](../docs/HF_MODEL_CARD_CLICKS.md)  
-4. We attach it to the Kyros site demo *(done)*
+1. Follow [`docs/KAGGLE_1_2_CLICK_BY_CLICK.md`](../docs/KAGGLE_1_2_CLICK_BY_CLICK.md)  
+2. Secret `HF_REPO` = **`MAKALY/kepler-1.2`**  
+3. Paste the HF URL back in Cursor  
+4. Model card: copy [`model/cards/hf-README-1.2.md`](./cards/hf-README-1.2.md)
 
 ## Attribution
 
 Fine-tuned from [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya) (Apache 2.0).  
-Built by **Aly Maknojiya** / **Kyros Labs**. Not affiliated with TypeSafe AI or Jev.
+Built by **Kyros Labs**. Not affiliated with TypeSafe AI or Jev.

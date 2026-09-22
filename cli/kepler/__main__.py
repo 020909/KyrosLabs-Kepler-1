@@ -7,7 +7,15 @@ import json
 import sys
 from typing import Any
 
-from .core import GATE_QUESTION, extract_action, load_agent, predict_gate
+from .core import (
+    DEFAULT_MODEL,
+    GATE_QUESTION,
+    extract_action,
+    extract_noul,
+    extract_score,
+    load_agent,
+    predict_gate,
+)
 from .session import run_interactive
 from . import ui
 
@@ -77,24 +85,141 @@ def cmd_decide(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_choice(args: argparse.Namespace) -> int:
+    criteria = {}
+    for part in args.option:
+        if "=" not in part:
+            ui.err(f"error: options must be key=description, got {part!r}")
+            return 2
+        k, v = part.split("=", 1)
+        criteria[k.strip()] = v.strip()
+    if len(criteria) < 2:
+        ui.err("error: need at least two --option key=desc")
+        return 2
+
+    state: Any
+    if args.state.startswith("@"):
+        with open(args.state[1:], encoding="utf-8") as f:
+            state = json.load(f)
+    else:
+        try:
+            state = json.loads(args.state)
+        except json.JSONDecodeError:
+            state = {"text": args.state}
+
+    q = {
+        "answer": {
+            "type": "choice",
+            "instructions": args.ask,
+            "criteria": criteria,
+        }
+    }
+    agent = load_agent(args.model)
+    out = agent.predict(state, q)
+    if args.json:
+        print(json.dumps(out, indent=2, default=str))
+        return 0
+    choice, probs, conf = extract_action(out)
+    # extract_action looks for "action"; fall back to answer key
+    if choice == "unknown":
+        from .core import extract_payload
+
+        payload = extract_payload(out, "answer")
+        choice = str(
+            payload.get("choice")
+            or payload.get("answer")
+            or payload.get("value")
+            or "unknown"
+        )
+        probs_raw = payload.get("probabilities") or {}
+        probs = {str(k): float(v) for k, v in dict(probs_raw).items()}
+        conf = float(payload["confidence"]) if payload.get("confidence") is not None else None
+    label = args.state if len(args.state) < 80 else args.state[:77] + "…"
+    ui.render_decision(label, choice, probs, conf)
+    return 0
+
+
+def cmd_noul(args: argparse.Namespace) -> int:
+    state: Any
+    if args.state.startswith("@"):
+        with open(args.state[1:], encoding="utf-8") as f:
+            state = json.load(f)
+    else:
+        try:
+            state = json.loads(args.state)
+        except json.JSONDecodeError:
+            state = {"text": args.state}
+
+    q = {"answer": {"type": "noul", "instructions": args.ask}}
+    agent = load_agent(args.model)
+    out = agent.predict(state, q)
+    if args.json:
+        print(json.dumps(out, indent=2, default=str))
+        return 0
+    yes, p_true, probs = extract_noul(out, "answer")
+    if args.value:
+        print("true" if yes else "false")
+        return 0
+    label = args.state if len(str(args.state)) < 80 else str(args.state)[:77] + "…"
+    ui.render_noul(label, yes, p_true, probs)
+    return 0
+
+
+def cmd_score(args: argparse.Namespace) -> int:
+    levels = list(args.level)
+    if len(levels) < 2:
+        ui.err("error: need at least two --level labels")
+        return 2
+    state: Any
+    if args.state.startswith("@"):
+        with open(args.state[1:], encoding="utf-8") as f:
+            state = json.load(f)
+    else:
+        try:
+            state = json.loads(args.state)
+        except json.JSONDecodeError:
+            state = {"text": args.state}
+
+    q = {
+        "answer": {
+            "type": "score",
+            "instructions": args.ask,
+            "criteria": levels,
+        }
+    }
+    agent = load_agent(args.model)
+    out = agent.predict(state, q)
+    if args.json:
+        print(json.dumps(out, indent=2, default=str))
+        return 0
+    score, probs = extract_score(out, "answer")
+    if args.value:
+        print(score if score is not None else "")
+        return 0
+    label = args.state if len(str(args.state)) < 80 else str(args.state)[:77] + "…"
+    ui.render_score(label, score, levels, probs)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="kepler",
         description=(
-            "Kepler 1.1 — open local System One decisions (Kyros Labs).\n"
-            "Run with no arguments to open the interactive playground."
+            "Kepler — open local System One decisions (Kyros Labs).\n"
+            "Run with no arguments to open the interactive playground.\n"
+            "Primitives: gate · choice · noul · score (1.2 weights unlock breadth)."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument(
         "--model",
-        default="MAKALY/kepler-1.1",
-        help="Hugging Face model id or local path (default: MAKALY/kepler-1.1)",
+        default=DEFAULT_MODEL,
+        help=f"Hugging Face model id or local path (default: {DEFAULT_MODEL})",
     )
     p.add_argument(
         "--version",
         action="version",
-        version="kepler 0.2.0",
+        version="kepler 0.3.0",
     )
     sub = p.add_subparsers(dest="cmd")
 
@@ -122,7 +247,44 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("--value", action="store_true")
     decide.set_defaults(func=cmd_decide)
 
+    choice = sub.add_parser("choice", help="Typed multi-way choice (System One)")
+    choice.add_argument("--ask", "-a", required=True, help="Question / instructions")
+    choice.add_argument(
+        "--option",
+        "-o",
+        action="append",
+        required=True,
+        help="key=description (repeat)",
+    )
+    choice.add_argument("--state", "-s", required=True, help="JSON state, @file, or text")
+    choice.add_argument("--json", action="store_true")
+    choice.set_defaults(func=cmd_choice)
+
+    noul = sub.add_parser("noul", help="Calibrated true/false (System One)")
+    noul.add_argument("--ask", "-a", required=True, help="Yes/no question")
+    noul.add_argument("--state", "-s", required=True, help="JSON state, @file, or text")
+    noul.add_argument("--value", action="store_true")
+    noul.add_argument("--json", action="store_true")
+    noul.set_defaults(func=cmd_noul)
+
+    score = sub.add_parser("score", help="Ordered score / severity (System One)")
+    score.add_argument("--ask", "-a", required=True, help="What to score")
+    score.add_argument(
+        "--level",
+        "-l",
+        action="append",
+        required=True,
+        help="Level label from low→high (repeat)",
+    )
+    score.add_argument("--state", "-s", required=True, help="JSON state, @file, or text")
+    score.add_argument("--value", action="store_true")
+    score.add_argument("--json", action="store_true")
+    score.set_defaults(func=cmd_score)
+
     return p
+
+
+_SUBCOMMANDS = {"gate", "decide", "choice", "noul", "score"}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -133,8 +295,7 @@ def main(argv: list[str] | None = None) -> int:
         "--help",
         "--version",
     }:
-        # Allow `kepler --model X` without a subcommand
-        model = "MAKALY/kepler-1.1"
+        model = DEFAULT_MODEL
         if "--model" in argv:
             i = argv.index("--model")
             if i + 1 < len(argv):
@@ -145,10 +306,9 @@ def main(argv: list[str] | None = None) -> int:
             build_parser().print_help()
             return 0
         if argv and argv[0] == "--version":
-            print("kepler 0.2.0")
+            print("kepler 0.3.0")
             return 0
-        # If first token is a known subcommand, fall through to argparse
-        if argv and argv[0] in {"gate", "decide"}:
+        if argv and argv[0] in _SUBCOMMANDS:
             pass
         else:
             return run_interactive(model)

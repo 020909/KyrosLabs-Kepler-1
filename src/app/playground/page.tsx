@@ -23,9 +23,9 @@ export default function PlaygroundPage() {
               <Image
                 src="/brand/kepler-avatar.png"
                 alt="Kepler avatar"
-                width={56}
-                height={56}
-                className="size-14 rounded-[4px] border border-white/10"
+                width={112}
+                height={112}
+                className="size-28 rounded-[6px] border border-white/10 object-cover"
                 priority
               />
               <p className="type-mono-eyebrow text-signal">{siteConfig.product}</p>

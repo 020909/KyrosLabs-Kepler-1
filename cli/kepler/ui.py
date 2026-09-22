@@ -42,12 +42,13 @@ def rule() -> None:
 def banner() -> None:
     """Kyros brand: near-black + lavender #828fff."""
     print()
-    # Tiny face mark (lavender) — companion vibe, not a galaxy.
+    # Bat mark (lavender) — dark-design companion, ~2× presence.
     face = [
-        "    ╭───╮",
-        "    │ ◠ │",
-        "    ╰┬─┬╯",
-        "     ╰─╯",
+        "   ╱╲   ╱╲",
+        "  ╱  ╲_╱  ╲",
+        "  │ ◉   ◉ │",
+        "  ╰───ᴗ───╯",
+        "   ╲_____╱",
     ]
     for line in face:
         print(c(C.SIGNAL, line))
@@ -82,7 +83,7 @@ def try_show_avatar() -> None:
 
         b64 = base64.b64encode(data).decode("ascii")
         sys.stdout.write(
-            f"\033]1337;File=name=kepler.png;inline=1;width=4;height=4;preserveAspectRatio=1:{b64}\a\n"
+            f"\033]1337;File=name=kepler.png;inline=1;width=8;height=8;preserveAspectRatio=1:{b64}\a\n"
         )
         sys.stdout.flush()
 
@@ -121,9 +122,68 @@ def render_decision(
         print(f"  {c(C.SIGNAL, f'conf {confidence:.2f}')}")
     print()
     print(c(C.MUTED, "  distribution"))
-    for key in ("allow", "ask", "deny"):
-        if key in probs:
+    keys = list(probs.keys())
+    preferred = [k for k in ("allow", "ask", "deny") if k in probs]
+    order = preferred if preferred else keys
+    for key in order:
+        bar(key, float(probs[key]), highlight=(key == choice))
+    for key in keys:
+        if key not in order:
             bar(key, float(probs[key]), highlight=(key == choice))
+    rule()
+    print()
+
+
+def render_noul(
+    label: str, yes: bool, p_true: float | None, probs: dict[str, float]
+) -> None:
+    print()
+    rule()
+    print(c(C.MUTED, "  state"))
+    print(f"  {c(C.FG, label)}")
+    print()
+    print(c(C.MUTED, "  noul"))
+    color = C.ALLOW if yes else C.MUTED
+    print(f"  {c(C.BOLD + color, 'TRUE' if yes else 'FALSE')}")
+    if p_true is not None:
+        print(f"  {c(C.SIGNAL, f'p(true) {p_true:.2f}')}")
+    print()
+    print(c(C.MUTED, "  distribution"))
+    for key in ("false", "true"):
+        if key in probs:
+            bar(key, float(probs[key]), highlight=(key == ("true" if yes else "false")))
+    rule()
+    print()
+
+
+def render_score(
+    label: str,
+    score: float | None,
+    levels: list[str],
+    probs: dict[str, float],
+) -> None:
+    print()
+    rule()
+    print(c(C.MUTED, "  state"))
+    print(f"  {c(C.FG, label)}")
+    print()
+    print(c(C.MUTED, "  score"))
+    if score is not None:
+        idx = int(round(score))
+        name = levels[idx] if 0 <= idx < len(levels) else str(score)
+        print(f"  {c(C.BOLD + C.SIGNAL, name)}  {c(C.MUTED, f'(level {score:.2f})')}")
+    else:
+        print(f"  {c(C.FG, 'unknown')}")
+    print()
+    print(c(C.MUTED, "  distribution"))
+    if probs:
+        # prefer numeric keys aligned to levels
+        for i, name in enumerate(levels):
+            key = str(i)
+            if key in probs:
+                bar(name[:12], float(probs[key]), highlight=(score is not None and int(round(score)) == i))
+            elif name in probs:
+                bar(name[:12], float(probs[name]), highlight=False)
     rule()
     print()
 

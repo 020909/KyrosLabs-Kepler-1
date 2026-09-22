@@ -1,15 +1,13 @@
 # Making Kepler more like Jev
 
-## Honest status (1.1)
+## Status
 
-**Kepler 1.1** is a strong first specialist cut:
+| Cut | Live | Role |
+|---|---|---|
+| **1.1** | [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1) | Agent tool gates + secret tripwire |
+| **1.2** | Train next → `MAKALY/kepler-1.2` | Jev-like System One breadth |
 
-- Tool gates: allow / ask / deny  
-- Secret tripwire  
-
-It is **not** yet a general System One model like Jev (support routing, urgency, refund, escalate, arbitrary typed questions).
-
-That’s why “existence of god” as free text is the wrong test for 1.1 — and the CLI now refuses that path instead of faking a shell gate.
+**1.1** is not general System One. Free-text philosophy is the wrong test — use `kepler noul` / `choice` / `score` with **1.2** once weights land.
 
 ## What Jev does (product shape)
 
@@ -18,26 +16,21 @@ That’s why “existence of god” as free text is the wrong test for 1.1 — a
 3. **CLI / SDK / API** for software  
 4. **Broad workflows:** tickets, triage, routing, risk — not only agents  
 
-Kepler already has playground + CLI. The gap is **breadth of training**.
+Kepler already has playground + CLI + primitives. **1.2 = breadth of training.**
 
-## How we get there
+## Play for 1.2 (now)
 
-Yes — **more training**, but specifically:
+1. Pack is ready: `model/notebooks/kepler_1_2_kaggle.ipynb`  
+2. Aly: follow [`docs/KAGGLE_1_2_CLICK_BY_CLICK.md`](./KAGGLE_1_2_CLICK_BY_CLICK.md)  
+3. Secrets: `HF_TOKEN` + `HF_REPO=MAKALY/kepler-1.2`  
+4. Paste the HF URL back → we flip site/CLI default to 1.2  
 
-| Step | What |
-|---|---|
-| 1 | Keep agent gates (viral demo) |
-| 2 | Add public/synthetic datasets for routing, urgency, spam, refund, escalate, toxicity, etc. |
-| 3 | Train with `choice` + `score` + `noul` (full Laya System One surface) |
-| 4 | Ship **Kepler 1.2** weights on HF + widen CLI (`kepler noul`, `kepler choice`, `kepler score`) |
-| 5 | Keep $0 path: Kaggle T4 again |
-
-No need for a paid cloud API to match Jev’s *role*. Jev is cloud; Kepler stays **open + local**.
+No paid cloud. Same $0 Kaggle T4 path.
 
 ## Product rule
 
 - Marketing: “open System One”  
-- Demo today: tool gates (what 1.1 nails)  
-- Roadmap: general typed decisions (1.2+)  
+- Live demo today: tool gates (1.1)  
+- Next demo: triage / noul / score (1.2)  
 
-Founder credit stays on the **Kyros Labs** company site / NOTICE — not inside the Kepler terminal product chrome.
+Founder credit stays on the **Kyros Labs** company site / NOTICE — not inside Kepler terminal chrome.
