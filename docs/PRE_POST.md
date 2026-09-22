@@ -41,11 +41,11 @@ People landing from tweets will bounce without a card.
 
 ## Strongly recommended (same day)
 
-### 4. Confirm waitlist email delivery
-Waitlist now also emails **hello@kyroslabs.tech** via FormSubmit.  
+### 4. Confirm form emails to Gmail
+Waitlist + Join us email **alymaknojiya7@gmail.com** via FormSubmit.  
 **First** submission sends a one-time confirm link to that inbox — click it, or leads never arrive.
 
-Test: submit yourself on production `/waitlist`, confirm the FormSubmit email, check inbox.
+Test once on production `/waitlist` and `/join` after deploy.
 
 ### 5. Links to use when posting
 From `docs/MARKETING.md`:

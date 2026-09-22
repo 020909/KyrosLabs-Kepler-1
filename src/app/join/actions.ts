@@ -2,6 +2,7 @@
 
 import { mkdir, appendFile } from "node:fs/promises";
 import path from "node:path";
+import { emailFormSubmission } from "@/lib/form-inbox";
 
 export type JoinState = {
   ok: boolean;
@@ -45,13 +46,25 @@ export async function submitJoinApplication(
     links: links || null,
   };
 
-  const dir = path.join(process.cwd(), "data");
-  await mkdir(dir, { recursive: true });
-  await appendFile(
-    path.join(dir, "join-applications.jsonl"),
-    `${JSON.stringify(entry)}\n`,
-    "utf8",
-  );
+  try {
+    const dir = path.join(process.cwd(), "data");
+    await mkdir(dir, { recursive: true });
+    await appendFile(
+      path.join(dir, "join-applications.jsonl"),
+      `${JSON.stringify(entry)}\n`,
+      "utf8",
+    );
+  } catch {
+    // ignore filesystem failures on serverless
+  }
+
+  await emailFormSubmission("Kyros Labs — Join us application", {
+    name,
+    email,
+    role,
+    skills,
+    links: links || "(none)",
+  });
 
   return {
     ok: true,
