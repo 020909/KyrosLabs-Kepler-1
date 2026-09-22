@@ -11,9 +11,9 @@
 
 ## Aly does next
 
-1. **Post** using [`MARKETING.md`](./MARKETING.md) (X, LinkedIn, HF, Discord)  
-2. **Optional:** paste [`model/cards/hf-README-1.2.md`](../model/cards/hf-README-1.2.md) onto the HF model card  
-3. Confirm production deploy has the latest `main` (Vercel auto-deploy if linked)
+1. **Before posting** — follow [`PRE_POST.md`](./PRE_POST.md) (GitHub sync → Vercel → HF card)  
+2. **Post** using [`MARKETING.md`](./MARKETING.md)  
+3. Confirm FormSubmit email for waitlist (one-time click on hello@)  
 
 ## Cost
 

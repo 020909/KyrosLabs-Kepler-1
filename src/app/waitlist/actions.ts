@@ -39,13 +39,43 @@ export async function submitWaitlist(
     product: "kepler-1.3",
   };
 
-  const dir = path.join(process.cwd(), "data");
-  await mkdir(dir, { recursive: true });
-  await appendFile(
-    path.join(dir, "waitlist-1.3.jsonl"),
-    `${JSON.stringify(entry)}\n`,
-    "utf8",
-  );
+  // Best-effort local log (works in local/dev; ephemeral on Vercel).
+  try {
+    const dir = path.join(process.cwd(), "data");
+    await mkdir(dir, { recursive: true });
+    await appendFile(
+      path.join(dir, "waitlist-1.3.jsonl"),
+      `${JSON.stringify(entry)}\n`,
+      "utf8",
+    );
+  } catch {
+    // ignore filesystem failures on serverless
+  }
+
+  // Durable path: email to Kyros inbox via FormSubmit (free, no API key).
+  // First submission triggers a one-time confirmation email to hello@kyroslabs.tech — click it.
+  try {
+    const res = await fetch("https://formsubmit.co/ajax/hello@kyroslabs.tech", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        _subject: "Kepler 1.3 waitlist signup",
+        name,
+        email,
+        country,
+        product: "kepler-1.3",
+      }),
+    });
+    if (!res.ok) {
+      // Still accept the lead — local log may have it; email may need FormSubmit confirm.
+      console.warn("formsubmit status", res.status, await res.text());
+    }
+  } catch (err) {
+    console.warn("formsubmit failed", err);
+  }
 
   return {
     ok: true,
