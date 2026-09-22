@@ -38,8 +38,8 @@ export default function JoinPage() {
               ))}
             </ul>
             <p className="mt-8 text-xs text-muted-foreground">
-              Submissions go to {siteConfig.email}. No placeholding, this form
-              is live.
+              Submissions email {siteConfig.founder.name} directly. First time
+              only: confirm the FormSubmit link in Gmail (check Spam).
             </p>
           </ScrollReveal>
 

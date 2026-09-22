@@ -1,55 +1,122 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  submitJoinApplication,
-  type JoinState,
-} from "@/app/join/actions";
+import { FORM_INBOX } from "@/lib/form-inbox";
 
-const initial: JoinState = { ok: false, message: "" };
+type Status = "idle" | "pending" | "ok" | "activate" | "error";
 
 export function JoinForm() {
-  const [state, action, pending] = useActionState(
-    submitJoinApplication,
-    initial,
-  );
+  const [status, setStatus] = useState<Status>("idle");
+  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (state.ok) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") ?? "").trim();
+    const email = String(fd.get("email") ?? "").trim();
+    const role = String(fd.get("role") ?? "").trim();
+    const skills = String(fd.get("skills") ?? "").trim();
+    const links = String(fd.get("links") ?? "").trim();
+
+    const nextErrors: Record<string, string> = {};
+    if (name.length < 2) nextErrors.name = "Please enter your full name.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      nextErrors.email = "Enter a valid email.";
+    if (role.length < 2) nextErrors.role = "Tell us the role you want.";
+    if (skills.length < 40)
+      nextErrors.skills =
+        "Write a short paragraph (at least ~40 characters) about your skills.";
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      setStatus("error");
+      setMessage("Fix the highlighted fields and try again.");
+      return;
+    }
+    setErrors({});
+    setStatus("pending");
+    setMessage("");
+
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${FORM_INBOX}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: "Kyros Labs — Join us application",
+          _template: "table",
+          _captcha: "false",
+          name,
+          email,
+          role,
+          skills,
+          links: links || "(none)",
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        success?: string | boolean;
+        message?: string;
+      };
+      const raw = `${data.success ?? ""} ${data.message ?? ""}`.toLowerCase();
+      if (
+        raw.includes("confirm") ||
+        raw.includes("activate") ||
+        raw.includes("check your email")
+      ) {
+        setStatus("activate");
+        setMessage(
+          `Check Spam/Inbox for ${FORM_INBOX} — open the FormSubmit “Confirm your email” link once. Then submit again.`,
+        );
+        return;
+      }
+      if (!res.ok) {
+        setStatus("error");
+        setMessage("Couldn’t send right now. Try again in a minute.");
+        return;
+      }
+      setStatus("ok");
+      setMessage(
+        "Application received. We’ll review it and reply by email if there’s a fit.",
+      );
+    } catch {
+      setStatus("error");
+      setMessage("Network error. Check your connection and try again.");
+    }
+  }
+
+  if (status === "ok") {
     return (
       <div className="rounded-xl border border-signal/30 bg-signal/5 p-8">
         <p className="font-sans text-2xl font-medium text-foreground">
           You’re in the queue.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {state.message}
+          {message}
         </p>
       </div>
     );
   }
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <div className="grid gap-5 md:grid-cols-2">
-        <Field
-          id="name"
-          label="Full name"
-          error={state.errors?.name}
-          required
-        >
+        <Field id="name" label="Full name" error={errors.name} required>
           <Input
             id="name"
             name="name"
             required
             placeholder="Ada Lovelace"
             className="h-11 border-white/10 bg-white/[0.03]"
-            aria-invalid={!!state.errors?.name}
+            aria-invalid={!!errors.name}
           />
         </Field>
-        <Field id="email" label="Email" error={state.errors?.email} required>
+        <Field id="email" label="Email" error={errors.email} required>
           <Input
             id="email"
             name="email"
@@ -57,7 +124,7 @@ export function JoinForm() {
             required
             placeholder="you@example.com"
             className="h-11 border-white/10 bg-white/[0.03]"
-            aria-invalid={!!state.errors?.email}
+            aria-invalid={!!errors.email}
           />
         </Field>
       </div>
@@ -65,7 +132,7 @@ export function JoinForm() {
       <Field
         id="role"
         label="Role you’re aiming for"
-        error={state.errors?.role}
+        error={errors.role}
         required
       >
         <Input
@@ -74,14 +141,14 @@ export function JoinForm() {
           required
           placeholder="Research eng · Design · Growth · Ops…"
           className="h-11 border-white/10 bg-white/[0.03]"
-          aria-invalid={!!state.errors?.role}
+          aria-invalid={!!errors.role}
         />
       </Field>
 
       <Field
         id="skills"
         label="What skills do you bring?"
-        error={state.errors?.skills}
+        error={errors.skills}
         required
         hint="A short paragraph, what you’ve shipped, what you’re great at, why Kyros."
       >
@@ -92,7 +159,7 @@ export function JoinForm() {
           rows={6}
           placeholder="I’ve trained / evaluated decision models, shipped open-source tooling, or built product surfaces that need typed decisions…"
           className="border-white/10 bg-white/[0.03]"
-          aria-invalid={!!state.errors?.skills}
+          aria-invalid={!!errors.skills}
         />
       </Field>
 
@@ -109,16 +176,22 @@ export function JoinForm() {
         />
       </Field>
 
-      {state.message && !state.ok ? (
-        <p className="text-sm text-destructive">{state.message}</p>
+      {status === "activate" || status === "error" ? (
+        <p
+          className={
+            status === "activate" ? "text-sm text-signal" : "text-sm text-destructive"
+          }
+        >
+          {message}
+        </p>
       ) : null}
 
       <Button
         type="submit"
-        disabled={pending}
+        disabled={status === "pending"}
         className="h-11 rounded-md bg-foreground text-background hover:bg-foreground/90"
       >
-        {pending ? "Sending…" : "Submit application"}
+        {status === "pending" ? "Sending…" : "Submit application"}
       </Button>
     </form>
   );
