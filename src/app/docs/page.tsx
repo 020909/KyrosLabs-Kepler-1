@@ -28,10 +28,19 @@ export default function DocsPage() {
           <ScrollReveal delay={0.05}>
             <h2 className="mt-14 font-sans text-2xl font-medium">Install</h2>
             <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/50 p-5 font-mono text-[13px] text-[#c4c4cc]">
-{`pip install laya
-# free public weights
+{`pip install "laya>=0.3.0" "numpy<2" "transformers>=4.48.0,<5"
 from laya import load
-agent = load("${siteConfig.keplerModelId}")`}
+agent = load("${siteConfig.keplerModelId}")
+
+out = agent.predict(
+  {"tool": "shell", "command": "git status", "cwd": "/workspace"},
+  {"action": {
+    "type": "choice",
+    "instructions": "Should the coding agent run this call?",
+    "criteria": {"allow": "Safe", "ask": "Needs confirmation", "deny": "Dangerous or secret leak"},
+  }},
+)
+print(out)`}
             </pre>
             <p className="mt-3 text-sm text-muted-foreground">
               Model page:{" "}
