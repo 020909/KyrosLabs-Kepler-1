@@ -53,34 +53,34 @@ const features = [
 
 const explore = [
   {
-    href: "/about",
+    href: "/playground",
     index: "01",
-    title: "About",
-    body: "What Kepler is, why it exists, and how we stay legal.",
+    title: "Playground",
+    body: "Feel allow / ask / deny without writing code.",
   },
   {
     href: "/docs",
     index: "02",
     title: "Docs",
-    body: "Install path, primitives, and how to plug decisions into code.",
+    body: "CLI, install path, primitives, plug into agents.",
+  },
+  {
+    href: "/about",
+    index: "03",
+    title: "About",
+    body: "What Kepler is, why it exists, and how we stay legal.",
   },
   {
     href: "/use-cases",
-    index: "03",
+    index: "04",
     title: "Use cases",
     body: "Routing, guardrails, triage. where System One wins.",
   },
   {
     href: "/pricing",
-    index: "04",
+    index: "05",
     title: "Pricing",
     body: "$0. Free. Open. Self-hosted. No meter.",
-  },
-  {
-    href: "/join",
-    index: "05",
-    title: "Join us",
-    body: "Tell us your skills. Help ship the next Kepler.",
   },
   {
     href: siteConfig.keplerHuggingFace,
@@ -166,6 +166,12 @@ export default function HomePage() {
 
           <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg" variant="default">
+              <Link href="/playground">
+                Open playground
+                <ArrowUpRight data-icon="inline-end" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
               <a
                 href={siteConfig.keplerHuggingFace}
                 target="_blank"
@@ -174,12 +180,6 @@ export default function HomePage() {
                 Get free weights
                 <ArrowUpRight data-icon="inline-end" />
               </a>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/docs">
-                Read the docs
-                <ArrowUpRight data-icon="inline-end" />
-              </Link>
             </Button>
           </div>
         </div>
@@ -408,23 +408,25 @@ export default function HomePage() {
                 Ship the open alternative.
               </h2>
               <p className="type-body-lg mt-4 text-muted-foreground">
-                Download free weights. Read the docs. Run Kepler where your data
-                already lives.
+                Open the playground. Download free weights. Run Kepler where your
+                data already lives.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
+                <Link href="/playground">
+                  Open playground
+                  <ArrowUpRight data-icon="inline-end" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
                 <a
                   href={siteConfig.keplerHuggingFace}
                   target="_blank"
                   rel="noreferrer"
                 >
                   Get free weights
-                  <ArrowUpRight data-icon="inline-end" />
                 </a>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/docs">Read docs</Link>
               </Button>
             </div>
           </div>

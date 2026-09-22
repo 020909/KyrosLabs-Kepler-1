@@ -16,17 +16,47 @@ export default function DocsPage() {
       <article className="px-6 pt-16 pb-28 md:pt-24">
         <div className="mx-auto max-w-3xl">
           <ScrollReveal>
-<h1 className="mt-4 font-sans text-4xl font-medium tracking-tight md:text-5xl">
+            <h1 className="mt-4 font-sans text-4xl font-medium tracking-tight md:text-5xl">
               Get {siteConfig.product} into your stack
             </h1>
             <p className="mt-5 text-base text-muted-foreground">
-              Kepler follows the Laya decision primitives. Weights for 1.1 are
-              live on Hugging Face, free to download and run locally.
+              Start in the playground. Prefer terminal? Use the CLI. Building an
+              agent? Load the open weights. Same typed decisions everywhere.
             </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button asChild>
+                <Link href="/playground">Open playground</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <a
+                  href={siteConfig.keplerHuggingFace}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Free weights
+                </a>
+              </Button>
+            </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.05}>
-            <h2 className="mt-14 font-sans text-2xl font-medium">Install</h2>
+            <h2 className="mt-14 font-sans text-2xl font-medium">CLI</h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              No paste-a-script every time. Gate a command from the terminal.
+            </p>
+            <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/50 p-5 font-mono text-[13px] text-[#c4c4cc]">
+{`pip install -e ./cli
+kepler gate --command "rm -rf /"
+# -> deny
+kepler gate --command "git status"
+# -> allow`}
+            </pre>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.05}>
+            <h2 className="mt-14 font-sans text-2xl font-medium">
+              Python (optional)
+            </h2>
             <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/50 p-5 font-mono text-[13px] text-[#c4c4cc]">
 {`pip install "laya>=0.3.0" "numpy<2" "transformers>=4.48.0,<5"
 from laya import load
@@ -61,7 +91,8 @@ print(out)`}
               >
                 open Laya
               </a>
-              .
+              . Mac notes:{" "}
+              <code className="text-signal">docs/RUN_LOCAL.md</code>.
             </p>
           </ScrollReveal>
 

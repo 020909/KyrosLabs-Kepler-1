@@ -21,6 +21,7 @@ export const siteConfig = {
   keplerHuggingFace: "https://huggingface.co/MAKALY/kepler-1.1",
   keplerModelId: "MAKALY/kepler-1.1",
   nav: [
+    { href: "/playground", label: "Playground" },
     { href: "/docs", label: "Docs" },
     { href: "/about", label: "About" },
     { href: "/use-cases", label: "Use cases" },
