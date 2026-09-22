@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kepler-cli"
-version = "0.1.0"
+version = "0.2.0"
 description = "Kepler 1.1 CLI — open local allow/ask/deny for coding agents (Kyros Labs)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,3 +22,6 @@ kepler = "kepler.__main__:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["kepler*"]
+
+[tool.setuptools.package-data]
+kepler = ["assets/*.png"]

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { PlaygroundConsole } from "@/components/playground-console";
@@ -18,7 +19,17 @@ export default function PlaygroundPage() {
       <section className="px-6 pt-16 pb-10 md:pt-24">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
-            <p className="type-mono-eyebrow text-signal">{siteConfig.product}</p>
+            <div className="flex items-center gap-4">
+              <Image
+                src="/brand/kepler-avatar.png"
+                alt="Kepler avatar"
+                width={56}
+                height={56}
+                className="size-14 rounded-[4px] border border-white/10"
+                priority
+              />
+              <p className="type-mono-eyebrow text-signal">{siteConfig.product}</p>
+            </div>
             <h1 className="type-display-xxl mt-4 max-w-3xl">
               Feel the decision.
               <span className="mt-2 block text-foreground/65 italic">
@@ -28,7 +39,7 @@ export default function PlaygroundPage() {
             <p className="type-body-lg mt-6 max-w-2xl text-muted-foreground">
               This playground mirrors the live open checkpoint. Click a scenario,
               run Kepler, read the typed answer. Same brand surface as the rest
-              of Kyros — dark, sharp, local-first.
+              of Kyros — dark, sharp, lavender signal, local-first.
             </p>
           </ScrollReveal>
         </div>
@@ -51,10 +62,10 @@ export default function PlaygroundPage() {
               commands without writing a script.
             </p>
             <pre className="mt-6 overflow-x-auto rounded-[4px] border border-white/10 bg-black/50 p-5 font-mono text-[13px] text-[#c4c4cc]">
-{`# from the repo
-pip install -e ./cli
-kepler gate --command "rm -rf /"
-# -> deny`}
+{`pip install -e ./cli
+kepler
+# branded session · menu or type a command
+# → ALLOW / ASK / DENY with probability bars`}
             </pre>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild variant="outline">

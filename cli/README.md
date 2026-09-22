@@ -1,35 +1,45 @@
 # kepler CLI
 
-Terminal front-end for **Kepler 1.1** (Kyros Labs). Same product surface as the site playground — typed allow / ask / deny — without writing Python each time.
+**Kepler 1.1** in the terminal — same product feel as the website playground.
 
-## Install (Mac-safe pins)
+Kyros Labs · Aly Maknojiya (Boston)
+
+## Install
 
 ```bash
 cd cli
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .
-# Intel Mac tip if torch pulls too new a transformers:
-pip install "torch==2.2.2" "numpy<2" "transformers>=4.48.0,<5"
+pip install "torch==2.2.2" "numpy<2" "transformers>=4.48.0,<5"   # Intel Mac safe pins
 ```
 
-## Use
+## Interactive (default)
+
+Just run:
 
 ```bash
-kepler gate --command "rm -rf /"
-kepler gate --command "git status"
-kepler gate --tool http --url "https://hooks.example.com/x" --method POST
+kepler
 ```
 
-Full JSON:
+You get a branded session:
+
+- menu of viral scenarios  
+- or type your own command  
+- big **ALLOW / ASK / DENY** with probability bars  
+- model stays loaded until you quit (`q`)
+
+This is the non-technical path. Technical users can still script:
 
 ```bash
-kepler decide --state '{"tool":"shell","command":"git status","cwd":"/workspace"}' --pretty
+kepler gate --command "rm -rf /" --value
+kepler gate --command "git status" --json
 ```
 
-Default model: `MAKALY/kepler-1.1`. Override with `--model /path/or/hf-id`.
+## Website twin
 
-## Website
+https://kyroslabs.tech/playground
 
-Playground: https://kyroslabs.tech/playground  
-Weights: https://huggingface.co/MAKALY/kepler-1.1
+## Weights
+
+https://huggingface.co/MAKALY/kepler-1.1

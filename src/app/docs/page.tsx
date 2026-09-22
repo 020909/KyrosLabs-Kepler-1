@@ -46,11 +46,14 @@ export default function DocsPage() {
             </p>
             <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/50 p-5 font-mono text-[13px] text-[#c4c4cc]">
 {`pip install -e ./cli
-kepler gate --command "rm -rf /"
-# -> deny
-kepler gate --command "git status"
-# -> allow`}
+kepler
+# opens interactive playground in your terminal
+# pick 1–3 or type a command → ALLOW / ASK / DENY`}
             </pre>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Power users:{" "}
+              <code className="text-signal">kepler gate -c &quot;git status&quot; --value</code>
+            </p>
           </ScrollReveal>
 
           <ScrollReveal delay={0.05}>

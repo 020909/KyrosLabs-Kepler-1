@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -111,11 +112,15 @@ export function PlaygroundConsole() {
   return (
     <div className="overflow-hidden rounded-[4px] border border-white/10 bg-[#0c0c0e]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 px-4 py-3 md:px-5">
-        <div className="flex items-center gap-2">
-          <span className="size-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="size-2.5 rounded-full bg-[#febc2e]" />
-          <span className="size-2.5 rounded-full bg-[#28c840]" />
-          <span className="type-mono-caption ml-3 text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/brand/kepler-avatar.png"
+            alt=""
+            width={22}
+            height={22}
+            className="size-[22px] rounded-[3px]"
+          />
+          <span className="type-mono-caption text-muted-foreground">
             kepler · playground · 1.1
           </span>
         </div>
