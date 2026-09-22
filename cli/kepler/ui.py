@@ -15,13 +15,14 @@ class C:
     RESET = "\033[0m"
     DIM = "\033[2m"
     BOLD = "\033[1m"
-    SIGNAL = "\033[38;2;130;143;255m"  # #828fff
+    SIGNAL = "\033[38;2;130;143;255m"  # #828fff — site signal
     FG = "\033[38;2;237;237;237m"
     MUTED = "\033[38;2;160;160;168m"
     ALLOW = "\033[38;2;110;231;183m"
     ASK = "\033[38;2;252;211;77m"
     DENY = "\033[38;2;251;113;133m"
     LINE = "\033[38;2;40;40;46m"
+    BG = "\033[48;2;8;8;10m"  # #08080a
 
 
 def c(code: str, text: str) -> str:
@@ -35,33 +36,37 @@ def width() -> int:
 
 
 def rule() -> None:
-    w = width()
-    print(c(C.LINE, "─" * w))
+    print(c(C.LINE, "─" * width()))
 
 
 def banner() -> None:
-    """Kyros brand: near-black + lavender #828fff signal, with tiny orb avatar."""
+    """Kyros brand: near-black + lavender #828fff."""
     print()
-    # Compact ASCII twin of the Kepler avatar (lavender on dark).
-    orb = [
-        "      .·¤·.",
-        "    ·( ◉ )·",
-        "      `·´",
+    # Tiny face mark (lavender) — companion vibe, not a galaxy.
+    face = [
+        "    ╭───╮",
+        "    │ ◠ │",
+        "    ╰┬─┬╯",
+        "     ╰─╯",
     ]
-    for line in orb:
+    for line in face:
         print(c(C.SIGNAL, line))
     print()
-    print(c(C.SIGNAL, "██") + "  " + c(C.BOLD + C.FG, "Kepler 1.1"))
-    print(c(C.MUTED, "    Kyros Labs · open local System One"))
-    print(c(C.MUTED, "    Built by Aly Maknojiya · Boston"))
+    print(c(C.SIGNAL, "██") + "  " + c(C.BOLD + C.FG, "Kepler"))
+    print(c(C.MUTED, "    Kyros Labs · open System One"))
     print()
-    print(c(C.DIM + C.MUTED, "Typed allow / ask / deny for coding agents. $0. Local."))
+    print(
+        c(
+            C.DIM + C.MUTED,
+            "Typed decisions for software. Local. $0.",
+        )
+    )
     rule()
     print()
 
 
 def try_show_avatar() -> None:
-    """Best-effort inline image in iTerm2 / Kitty; otherwise ASCII banner only."""
+    """Best-effort inline image in iTerm2; otherwise ASCII only."""
     if not _tty():
         return
     try:
@@ -72,13 +77,12 @@ def try_show_avatar() -> None:
     except Exception:
         return
 
-    # iTerm2 inline image protocol
     if os.environ.get("TERM_PROGRAM") == "iTerm.app":
         import base64
 
         b64 = base64.b64encode(data).decode("ascii")
         sys.stdout.write(
-            f"\033]1337;File=name=kepler.png;inline=1;width=3;height=3;preserveAspectRatio=1:{b64}\a\n"
+            f"\033]1337;File=name=kepler.png;inline=1;width=4;height=4;preserveAspectRatio=1:{b64}\a\n"
         )
         sys.stdout.flush()
 
@@ -103,7 +107,9 @@ def bar(label: str, prob: float, *, highlight: bool) -> None:
     )
 
 
-def render_decision(label: str, choice: str, probs: dict[str, float], confidence: float | None) -> None:
+def render_decision(
+    label: str, choice: str, probs: dict[str, float], confidence: float | None
+) -> None:
     print()
     rule()
     print(c(C.MUTED, "  state"))

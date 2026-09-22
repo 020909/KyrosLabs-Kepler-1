@@ -1,8 +1,8 @@
 # kepler CLI
 
-**Kepler 1.1** in the terminal — same product feel as the website playground.
+**Kepler** in the terminal — same product feel as the website playground.
 
-Kyros Labs · Aly Maknojiya (Boston)
+Kyros Labs
 
 ## Install
 
@@ -16,27 +16,21 @@ pip install "torch==2.2.2" "numpy<2" "transformers>=4.48.0,<5"   # Intel Mac saf
 
 ## Interactive (default)
 
-Just run:
-
 ```bash
 kepler
 ```
 
-You get a branded session:
+Branded session: menu, type a command to gate, or ask a typed decision.
+Big **ALLOW / ASK / DENY** with probability bars. Model stays warm until `q`.
 
-- menu of viral scenarios  
-- or type your own command  
-- big **ALLOW / ASK / DENY** with probability bars  
-- model stays loaded until you quit (`q`)
-
-This is the non-technical path. Technical users can still script:
+Scripts:
 
 ```bash
 kepler gate --command "rm -rf /" --value
 kepler gate --command "git status" --json
 ```
 
-## Website twin
+## Website
 
 https://kyroslabs.tech/playground
 

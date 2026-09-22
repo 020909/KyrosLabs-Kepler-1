@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 from . import ui
-from .core import GATE_QUESTION, extract_action, load_agent, predict_gate
+from .core import extract_action, load_agent, predict_gate
 
 
 PRESETS = [
@@ -49,6 +50,26 @@ PRESETS = [
     },
 ]
 
+_SHELLISH = re.compile(
+    r"^(?:"
+    r"rm|mv|cp|chmod|chown|sudo|curl|wget|git|npm|pnpm|yarn|pip|python|node|"
+    r"docker|kubectl|ssh|scp|tar|unzip|kill|pkill|brew|apt|systemctl|cat|echo|"
+    r"ls|cd|mkdir|touch|find|grep|sed|awk|bash|zsh|sh|export|source|\./"
+    r")\b",
+    re.I,
+)
+
+
+def looks_like_command(text: str) -> bool:
+    t = text.strip()
+    if not t:
+        return False
+    if t.startswith(("-", "/", "~", ".", "$")):
+        return True
+    if "|" in t or "&&" in t or ";" in t:
+        return True
+    return bool(_SHELLISH.match(t))
+
 
 def _label_for_state(state: dict[str, Any]) -> str:
     if state.get("command"):
@@ -66,15 +87,28 @@ def _run_once(agent: Any, state: dict[str, Any]) -> None:
 
 
 def _menu() -> None:
-    print(ui.c(ui.C.SIGNAL, "  What should Kepler gate?"))
+    print(ui.c(ui.C.SIGNAL, "  Gate a tool call"))
     print()
     for p in PRESETS:
         print(
             f"  {ui.c(ui.C.SIGNAL, p['key'])}  {ui.c(ui.C.FG, p['title'])}"
             f"  {ui.c(ui.C.MUTED, p['hint'])}"
         )
-    print(f"  {ui.c(ui.C.SIGNAL, '4')}  {ui.c(ui.C.FG, 'Type my own command')}")
+    print(f"  {ui.c(ui.C.SIGNAL, '4')}  {ui.c(ui.C.FG, 'Type a shell / http command')}")
     print(f"  {ui.c(ui.C.SIGNAL, 'q')}  {ui.c(ui.C.MUTED, 'Quit')}")
+    print()
+    print(
+        ui.c(
+            ui.C.DIM + ui.C.MUTED,
+            "  Tip: Kepler 1.1 is strongest on tool gates.",
+        )
+    )
+    print(
+        ui.c(
+            ui.C.DIM + ui.C.MUTED,
+            "  Broader System One (Jev-style) lands in the next training cut.",
+        )
+    )
     print()
 
 
@@ -93,13 +127,14 @@ def run_interactive(model: str) -> int:
     while True:
         _menu()
         try:
-            choice = input(ui.c(ui.C.SIGNAL, "  › ") + "").strip().lower()
+            choice = input(ui.c(ui.C.SIGNAL, "  › ") + "").strip()
         except (EOFError, KeyboardInterrupt):
             print()
             ui.info("  Bye.")
             return 0
 
-        if choice in {"q", "quit", "exit"}:
+        low = choice.lower()
+        if low in {"q", "quit", "exit"}:
             ui.info("  Bye.")
             return 0
 
@@ -116,6 +151,14 @@ def run_interactive(model: str) -> int:
             if not cmd:
                 ui.err("  Empty command. Try again.")
                 continue
+            if not looks_like_command(cmd):
+                ui.err(
+                    "  That doesn’t look like a tool command.\n"
+                    "  Kepler 1.1 gates shell/http calls (allow/ask/deny).\n"
+                    "  General questions need the next System One training cut."
+                )
+                print()
+                continue
             state = {
                 "tool": "shell",
                 "command": cmd,
@@ -123,19 +166,22 @@ def run_interactive(model: str) -> int:
                 "agent": "cursor",
                 "goal": "user",
             }
+        elif looks_like_command(choice):
+            state = {
+                "tool": "shell",
+                "command": choice,
+                "cwd": "/workspace",
+                "agent": "cursor",
+                "goal": "user",
+            }
         else:
-            # Treat free text as a shell command (non-technical friendly)
-            if choice and choice not in {"help", "h", "?"}:
-                state = {
-                    "tool": "shell",
-                    "command": choice,
-                    "cwd": "/workspace",
-                    "agent": "cursor",
-                    "goal": "user",
-                }
-            else:
-                ui.err("  Pick 1–4, type a command, or q to quit.")
-                continue
+            ui.err(
+                "  Pick 1–4, paste a real command, or q.\n"
+                "  Free-form questions (e.g. philosophy) are out of scope for 1.1 —\n"
+                "  that’s what the next Jev-style training pass is for."
+            )
+            print()
+            continue
 
         try:
             _run_once(agent, state)
