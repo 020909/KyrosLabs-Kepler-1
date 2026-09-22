@@ -201,6 +201,26 @@ def cmd_score(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_demo(_args: argparse.Namespace) -> int:
+    """Launch reel. No model download. Same beats as kyroslabs.tech/gate."""
+    ui.banner()
+    beats = [
+        ("rm -rf /", "deny", {"allow": 0.13, "ask": 0.12, "deny": 0.75}, 0.75),
+        ("git status", "allow", {"allow": 0.66, "ask": 0.20, "deny": 0.15}, 0.66),
+        (
+            "POST hooks.example.com",
+            "deny",
+            {"allow": 0.12, "ask": 0.12, "deny": 0.76},
+            0.76,
+        ),
+    ]
+    for label, choice, probs, conf in beats:
+        ui.info("  agent → " + label)
+        ui.render_decision(label, choice, probs, conf)
+    ui.info("  Film this, or open https://kyroslabs.tech/gate")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="kepler",
@@ -281,10 +301,13 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument("--json", action="store_true")
     score.set_defaults(func=cmd_score)
 
+    demo = sub.add_parser("demo", help="Filmable gate reel, no model download")
+    demo.set_defaults(func=cmd_demo)
+
     return p
 
 
-_SUBCOMMANDS = {"gate", "decide", "choice", "noul", "score"}
+_SUBCOMMANDS = {"gate", "decide", "choice", "noul", "score", "demo"}
 
 
 def main(argv: list[str] | None = None) -> int:
