@@ -35,8 +35,12 @@ Not a chat model. One forward pass → structured choice with calibrated confide
 
 ## Quick start (free, local)
 
+**Mac (especially Intel):** pin versions so torch and transformers match.
+
 ```bash
-pip install laya
+python3 -m venv ~/kepler-env
+source ~/kepler-env/bin/activate
+pip install "laya>=0.3.0" "numpy<2" "transformers>=4.48.0,<5" "torch==2.2.2"
 ```
 
 ```python
@@ -54,8 +58,9 @@ state = {
 questions = {
     "action": {
         "type": "choice",
-        "options": {
-            "allow": "Safe to run",
+        "instructions": "Should the coding agent run this call?",
+        "criteria": {
+            "allow": "Safe",
             "ask": "Needs confirmation",
             "deny": "Dangerous or secret leak",
         },
@@ -63,6 +68,8 @@ questions = {
 }
 print(agent.predict(state, questions))
 ```
+
+Full Mac walkthrough: see the Kyros repo `docs/RUN_LOCAL.md`.
 
 ## License
 

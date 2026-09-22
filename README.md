@@ -34,6 +34,19 @@ Software often needs a fast *choice* (route this ticket, is this spam, how urgen
 | Training recipes | [`model/`](./model/) |
 | Kepler 1.1 weights | **Live** — [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1) (Apache 2.0, free) |
 
+## Run the model locally
+
+See [`docs/RUN_LOCAL.md`](./docs/RUN_LOCAL.md) (Mac-safe pins included).
+
+```bash
+pip install "laya>=0.3.0" "numpy<2" "transformers>=4.48.0,<5" "torch==2.2.2"
+```
+
+```python
+from laya import load
+agent = load("MAKALY/kepler-1.1")
+```
+
 ## Legal (non‑negotiable)
 
 - We **fine-tune Laya** under **Apache 2.0** and keep credit.
