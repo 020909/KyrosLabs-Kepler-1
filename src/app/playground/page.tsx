@@ -37,9 +37,9 @@ export default function PlaygroundPage() {
               </span>
             </h1>
             <p className="type-body-lg mt-6 max-w-2xl text-muted-foreground">
-              This playground mirrors the live open checkpoint. Click a scenario,
-              run Kepler, read the typed answer. Same brand surface as the rest
-              of Kyros — dark, sharp, lavender signal, local-first.
+              Feel typed decisions the Kyros way — dark, lavender signal, local-first.
+              Today’s live checkpoint shines on tool gates; broader System One
+              workflows are the next training cut.
             </p>
           </ScrollReveal>
         </div>
