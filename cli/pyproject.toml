@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kepler-cli"
 version = "0.3.0"
-description = "Kepler CLI — open local System One (choice / noul / score / gate) — Kyros Labs"
+description = "Kepler 1.2 CLI — open local System One (choice / noul / score / gate) — Kyros Labs"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }

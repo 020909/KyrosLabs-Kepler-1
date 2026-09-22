@@ -57,7 +57,7 @@ export function DecisionDemo() {
         <span className="size-2.5 rounded-full bg-[#febc2e]" />
         <span className="size-2.5 rounded-full bg-[#28c840]" />
         <span className="type-mono-caption ml-3 text-muted-foreground">
-          kepler · local · tool gates
+          kepler · 1.2 · system one
         </span>
       </div>
 

@@ -25,7 +25,7 @@ export function ComparisonTabs({ rows }: { rows: ComparisonRow[] }) {
               Metric
             </TableHead>
             <TableHead className="type-mono-label h-12 px-5 text-signal">
-              Kepler 1.1
+              Kepler 1.2
             </TableHead>
             <TableHead className="type-mono-label h-12 px-5 text-muted-foreground">
               Jev (proprietary)

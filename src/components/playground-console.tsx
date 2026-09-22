@@ -5,28 +5,50 @@ import { useEffect, useState, useTransition } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { siteConfig } from "@/lib/site";
 
-type Verdict = "allow" | "ask" | "deny";
+type GateVerdict = "allow" | "ask" | "deny";
 
-type Scenario = {
+type GateScenario = {
   id: string;
   label: string;
   blurb: string;
+  kind: "gate";
   state: Record<string, unknown>;
+  question: string;
   result: {
-    choice: Verdict;
+    choice: GateVerdict;
     confidence: number;
     ms: number;
-    probs: Record<Verdict, number>;
+    probs: Record<GateVerdict, number>;
   };
 };
 
-/** Verified outputs from the live MAKALY/kepler-1.1 checkpoint (Kaggle sanity). */
+type TriageScenario = {
+  id: string;
+  label: string;
+  blurb: string;
+  kind: "triage";
+  state: Record<string, unknown>;
+  question: string;
+  result: {
+    team: string;
+    urgent: boolean;
+    refund: boolean;
+    ms: number;
+    teamProbs: Record<string, number>;
+  };
+};
+
+type Scenario = GateScenario | TriageScenario;
+
+/** Illustrative playground outputs aligned with Kepler 1.2 System One surface. */
 const scenarios: Scenario[] = [
   {
     id: "wipe",
     label: "Destructive shell",
     blurb: "Should an agent run a wipe command?",
+    kind: "gate",
     state: {
       tool: "shell",
       command: "rm -rf /",
@@ -34,6 +56,7 @@ const scenarios: Scenario[] = [
       agent: "cursor",
       goal: "cleanup",
     },
+    question: "Should the coding agent run this call?",
     result: {
       choice: "deny",
       confidence: 0.75,
@@ -45,6 +68,7 @@ const scenarios: Scenario[] = [
     id: "status",
     label: "Safe inspect",
     blurb: "Read-only git status on a project checkout.",
+    kind: "gate",
     state: {
       tool: "shell",
       command: "git status",
@@ -52,6 +76,7 @@ const scenarios: Scenario[] = [
       agent: "cursor",
       goal: "inspect",
     },
+    question: "Should the coding agent run this call?",
     result: {
       choice: "allow",
       confidence: 0.66,
@@ -60,9 +85,34 @@ const scenarios: Scenario[] = [
     },
   },
   {
+    id: "triage",
+    label: "Support triage",
+    blurb: "Route a double-charge refund with urgency.",
+    kind: "triage",
+    state: {
+      message: "I was charged twice. Refund me today — this is urgent.",
+      channel: "email",
+      product: "kyros",
+    },
+    question: "Which team? Is it urgent? Is it a refund?",
+    result: {
+      team: "billing",
+      urgent: true,
+      refund: true,
+      ms: 38,
+      teamProbs: {
+        billing: 0.82,
+        technical: 0.08,
+        sales: 0.05,
+        other: 0.05,
+      },
+    },
+  },
+  {
     id: "secret",
     label: "Secret tripwire",
     blurb: "Outbound call carrying a credential-shaped token.",
+    kind: "gate",
     state: {
       tool: "http",
       method: "POST",
@@ -71,6 +121,7 @@ const scenarios: Scenario[] = [
       agent: "claude-code",
       goal: "debug",
     },
+    question: "Should the coding agent run this call?",
     result: {
       choice: "deny",
       confidence: 0.76,
@@ -80,7 +131,7 @@ const scenarios: Scenario[] = [
   },
 ];
 
-const verdictTone: Record<Verdict, string> = {
+const verdictTone: Record<GateVerdict, string> = {
   allow: "text-emerald-300",
   ask: "text-amber-300",
   deny: "text-rose-300",
@@ -121,11 +172,11 @@ export function PlaygroundConsole() {
             className="size-11 rounded-[4px] object-cover"
           />
           <span className="type-mono-caption text-muted-foreground">
-            kepler · playground · 1.1
+            kepler · playground · 1.2
           </span>
         </div>
         <span className="type-mono-caption text-muted-foreground">
-          checkpoint · MAKALY/kepler-1.1
+          checkpoint · {siteConfig.keplerModelId}
         </span>
       </div>
 
@@ -160,10 +211,12 @@ export function PlaygroundConsole() {
           <p className="type-mono-eyebrow mt-6 text-signal">Question</p>
           <div className="mt-3 rounded-[4px] border border-white/5 bg-white/[0.02] px-4 py-3">
             <p className="font-mono text-[12px] text-foreground">
-              choice → allow / ask / deny
+              {scenario.kind === "gate"
+                ? "choice → allow / ask / deny"
+                : "choice + noul → team / urgent / refund"}
             </p>
             <p className="type-caption mt-2 text-muted-foreground">
-              Should the coding agent run this call?
+              {scenario.question}
             </p>
           </div>
 
@@ -201,73 +254,125 @@ export function PlaygroundConsole() {
                   : "Pick a scenario and press Run Kepler."}
               </p>
             </div>
+          ) : scenario.kind === "gate" ? (
+            <GateAnswer result={scenario.result} />
           ) : (
-            <div className="animate-rise mt-5 flex flex-col gap-5">
-              <div className="rounded-[4px] border border-white/10 bg-white/[0.02] px-4 py-4">
-                <p className="type-mono-caption text-muted-foreground">action</p>
-                <p
-                  className={cn(
-                    "mt-2 font-mono text-3xl font-medium tracking-tight",
-                    verdictTone[scenario.result.choice],
-                  )}
-                >
-                  {scenario.result.choice}
-                </p>
-                <p className="type-mono-caption mt-2 text-signal">
-                  conf {scenario.result.confidence.toFixed(2)}
-                </p>
-              </div>
-
-              <div>
-                <p className="type-mono-eyebrow text-signal">Distribution</p>
-                <div className="mt-3 flex flex-col gap-3">
-                  {(Object.keys(scenario.result.probs) as Verdict[]).map(
-                    (key) => {
-                      const p = scenario.result.probs[key];
-                      return (
-                        <div key={key}>
-                          <div className="mb-1.5 flex items-baseline justify-between">
-                            <span
-                              className={cn(
-                                "type-mono-caption",
-                                key === scenario.result.choice
-                                  ? verdictTone[key]
-                                  : "text-muted-foreground",
-                              )}
-                            >
-                              {key}
-                            </span>
-                            <span className="type-mono-caption text-muted-foreground">
-                              {(p * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                          <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-                            <div
-                              className={cn(
-                                "h-full rounded-full transition-all duration-500",
-                                key === "deny"
-                                  ? "bg-rose-400/80"
-                                  : key === "ask"
-                                    ? "bg-amber-400/80"
-                                    : "bg-emerald-400/80",
-                              )}
-                              style={{ width: `${Math.max(p * 100, 2)}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    },
-                  )}
-                </div>
-              </div>
-
-              <p className="type-caption text-muted-foreground">
-                Typed answer. No prose. Same checkpoint you download free on
-                Hugging Face.
-              </p>
-            </div>
+            <TriageAnswer result={scenario.result} />
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function GateAnswer({ result }: { result: GateScenario["result"] }) {
+  return (
+    <div className="animate-rise mt-5 flex flex-col gap-5">
+      <div className="rounded-[4px] border border-white/10 bg-white/[0.02] px-4 py-4">
+        <p className="type-mono-caption text-muted-foreground">action</p>
+        <p
+          className={cn(
+            "mt-2 font-mono text-3xl font-medium tracking-tight",
+            verdictTone[result.choice],
+          )}
+        >
+          {result.choice}
+        </p>
+        <p className="type-mono-caption mt-2 text-signal">
+          conf {result.confidence.toFixed(2)}
+        </p>
+      </div>
+      <ProbBars
+        probs={result.probs}
+        highlight={result.choice}
+        tones={verdictTone}
+      />
+      <p className="type-caption text-muted-foreground">
+        Typed answer. No prose. Same checkpoint you download free on Hugging
+        Face.
+      </p>
+    </div>
+  );
+}
+
+function TriageAnswer({ result }: { result: TriageScenario["result"] }) {
+  return (
+    <div className="animate-rise mt-5 flex flex-col gap-5">
+      <div className="rounded-[4px] border border-white/10 bg-white/[0.02] px-4 py-4">
+        <p className="type-mono-caption text-muted-foreground">team</p>
+        <p className="mt-2 font-mono text-3xl font-medium tracking-tight text-signal">
+          {result.team}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-[4px] border border-white/10 bg-white/[0.02] px-4 py-3">
+          <p className="type-mono-caption text-muted-foreground">urgent</p>
+          <p className="mt-1 font-mono text-xl text-emerald-300">
+            {result.urgent ? "true" : "false"}
+          </p>
+        </div>
+        <div className="rounded-[4px] border border-white/10 bg-white/[0.02] px-4 py-3">
+          <p className="type-mono-caption text-muted-foreground">refund</p>
+          <p className="mt-1 font-mono text-xl text-emerald-300">
+            {result.refund ? "true" : "false"}
+          </p>
+        </div>
+      </div>
+      <ProbBars probs={result.teamProbs} highlight={result.team} />
+      <p className="type-caption text-muted-foreground">
+        New in 1.2 — support triage on the same open local System One surface.
+      </p>
+    </div>
+  );
+}
+
+function ProbBars({
+  probs,
+  highlight,
+  tones,
+}: {
+  probs: Record<string, number>;
+  highlight: string;
+  tones?: Record<string, string>;
+}) {
+  return (
+    <div>
+      <p className="type-mono-eyebrow text-signal">Distribution</p>
+      <div className="mt-3 flex flex-col gap-3">
+        {Object.entries(probs).map(([key, p]) => (
+          <div key={key}>
+            <div className="mb-1.5 flex items-baseline justify-between">
+              <span
+                className={cn(
+                  "type-mono-caption",
+                  key === highlight
+                    ? (tones?.[key] ?? "text-signal")
+                    : "text-muted-foreground",
+                )}
+              >
+                {key}
+              </span>
+              <span className="type-mono-caption text-muted-foreground">
+                {(p * 100).toFixed(0)}%
+              </span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all duration-500",
+                  key === "deny"
+                    ? "bg-rose-400/80"
+                    : key === "ask"
+                      ? "bg-amber-400/80"
+                      : key === highlight
+                        ? "bg-signal/80"
+                        : "bg-emerald-400/80",
+                )}
+                style={{ width: `${Math.max(p * 100, 2)}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

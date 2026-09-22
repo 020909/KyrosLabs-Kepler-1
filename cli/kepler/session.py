@@ -162,7 +162,7 @@ def _menu() -> None:
     print(
         ui.c(
             ui.C.DIM + ui.C.MUTED,
-            "  1–3 shine on Kepler 1.1. 4–5 jump with 1.2 weights.",
+            "  1–3 tool gates · 4–5 System One (1.2).",
         )
     )
     print(

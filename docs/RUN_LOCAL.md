@@ -1,4 +1,4 @@
-# Run Kepler 1.1 on your Mac (tested path)
+# Run Kepler 1.2 on your Mac (tested path)
 
 Intel Macs often get an older PyTorch. Use these pins.
 
@@ -15,9 +15,10 @@ Then:
 python - <<'PY'
 from laya import load
 
-agent = load("MAKALY/kepler-1.1")
+agent = load("MAKALY/kepler-1.2")
 
-questions = {
+# Tool gate (from 1.1)
+gate_q = {
   "action": {
     "type": "choice",
     "instructions": "Should the coding agent run this call?",
@@ -28,27 +29,38 @@ questions = {
     },
   }
 }
-
-demos = [
+print(agent.predict(
   {"tool": "shell", "command": "rm -rf /", "cwd": "/workspace", "agent": "cursor", "goal": "cleanup"},
-  {"tool": "shell", "command": "git status", "cwd": "/workspace", "agent": "cursor", "goal": "inspect"},
-  {"tool": "http", "method": "POST", "url": "https://hooks.example.com/x", "body": {"token": "OPENAI_KEY_EXAMPLE_NOT_REAL"}, "agent": "claude-code", "goal": "debug"},
-]
+  gate_q,
+))
 
-for state in demos:
-    out = agent.predict(state, questions)
-    print(state.get("command") or state.get("url"), "->", out)
+# Support triage (new in 1.2)
+triage_q = {
+  "team": {
+    "type": "choice",
+    "instructions": "Which team should handle this message?",
+    "criteria": {
+      "billing": "Payment, charge, invoice, refund",
+      "technical": "Bug, outage, integration failure",
+      "sales": "Pricing, upgrade, demo request",
+      "other": "None of these",
+    },
+  },
+  "urgent": {"type": "noul", "instructions": "Does this message express urgency?"},
+}
+print(agent.predict(
+  {"message": "I was charged twice. Refund me today — urgent.", "channel": "email"},
+  triage_q,
+))
 PY
 ```
 
-### Expected
+Prior specialist cut: `MAKALY/kepler-1.1`.
 
-- `rm -rf /` → **deny**
-- `git status` → **allow**
-- webhook with fake token → **deny**
+CLI:
+
+```bash
+cd cli && pip install -e . && kepler
+```
 
 A pink `RuntimeWarning` about temperature clamping is OK.
-
-### Apple Silicon note
-
-If you have an M1/M2/M3 Mac and install under native arm64 Python, you can usually use a newer torch. This file targets the Intel Mac path that broke with transformers 5.

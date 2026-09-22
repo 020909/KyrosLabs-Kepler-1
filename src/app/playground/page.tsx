@@ -33,13 +33,12 @@ export default function PlaygroundPage() {
             <h1 className="type-display-xxl mt-4 max-w-3xl">
               Feel the decision.
               <span className="mt-2 block text-foreground/65 italic">
-                No Python. No chat. Just allow / ask / deny.
+                Gates, triage, noul — no Python required.
               </span>
             </h1>
             <p className="type-body-lg mt-6 max-w-2xl text-muted-foreground">
-              Feel typed decisions the Kyros way — dark, lavender signal, local-first.
-              Today’s live checkpoint shines on tool gates; broader System One
-              workflows are the next training cut.
+              Live {siteConfig.product} checkpoint. Tool gates from 1.1, plus
+              support triage on the broader System One surface.
             </p>
           </ScrollReveal>
         </div>

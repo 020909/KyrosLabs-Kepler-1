@@ -47,8 +47,9 @@ export default function DocsPage() {
             <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/50 p-5 font-mono text-[13px] text-[#c4c4cc]">
 {`pip install -e ./cli
 kepler
-# opens interactive playground in your terminal
-# pick 1–3 or type a command → ALLOW / ASK / DENY`}
+# interactive playground · gates + triage + noul
+kepler noul --ask "Is this urgent?" --state "Refund today."
+kepler choice --ask "Which team?" -o billing="Payments" -o technical="Bugs" --state "…"`}
             </pre>
             <p className="mt-3 text-sm text-muted-foreground">
               Power users:{" "}

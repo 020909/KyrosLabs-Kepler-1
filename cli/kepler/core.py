@@ -5,8 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 
-DEFAULT_MODEL = "MAKALY/kepler-1.1"
-# After Kaggle 1.2 finishes, flip CLI default to MAKALY/kepler-1.2
+DEFAULT_MODEL = "MAKALY/kepler-1.2"
 
 GATE_QUESTION = {
     "action": {

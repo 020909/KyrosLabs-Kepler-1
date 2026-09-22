@@ -1,42 +1,39 @@
-# Kepler 1.1
+# Kepler 1.2
 
-**Kepler 1.1** is Kyros Labs’ open decision model — a fine-tune of [Laya](https://github.com/NandhaKishorM/laya) that stays **free**, **local**, and **Apache 2.0**.
+**Kepler 1.2** is Kyros Labs’ most powerful open decision model yet — a fine-tune of [Laya](https://github.com/NandhaKishorM/laya) that stays **free**, **local**, and **Apache 2.0**.
 
 **Built by [Aly Maknojiya](https://kyroslabs.tech), a student from Boston.**
 
-Website: [kyroslabs.tech](https://kyroslabs.tech)
+Website: [kyroslabs.tech](https://kyroslabs.tech) · Weights: [MAKALY/kepler-1.2](https://huggingface.co/MAKALY/kepler-1.2)
 
-> Kepler 1.1 from Kyros Labs, built by Aly Maknojiya, a student from Boston.
+> Kepler 1.2 from Kyros Labs — our most powerful model yet. Built by Aly Maknojiya, a student from Boston.
 
 ---
 
 ## In one sentence
 
-Software often needs a fast *choice* (route this ticket, is this spam, how urgent?) — not a long written answer. Kepler aims to be that reflex: open weights you run on your own machine.
+Software often needs a fast *choice* (route this ticket, is this urgent, should the agent run that shell?) — not a long written answer. Kepler is that reflex: open weights you run on your own machine.
 
-## Why this exists
+## Lineage
 
-| | Closed cloud (e.g. Jev) | Open local (Laya → Kepler 1.1) |
-|---|---|---|
-| Who hosts it | Someone else’s servers | You |
-| Can you inspect weights? | No | Yes |
-| Typical cost | Paid API | Free to self-host |
-| Speed | Network + model | Local, often much faster |
-
-[Laya](https://github.com/NandhaKishorM/laya) (Nandakishor Mukkunnoth / ConvAI Innovations) proved the open local path. Fine-tuning is where quality comes from. **Kyros Labs trains that gap and ships Kepler 1.1 in the open.**
+| Cut | Role |
+|---|---|
+| **1.1** | Coding-agent tool gates + secret tripwire |
+| **1.2** (now) | Full System One — triage, moderation, incident noul, plus gates |
+| **1.3** (soon) | Order-of-magnitude jump — [waitlist](https://kyroslabs.tech/waitlist) |
 
 ## Status
 
 | Piece | Status |
 |---|---|
 | Marketing site | Live in this repo |
-| Privacy / Terms | [`/privacy`](https://kyroslabs.tech/privacy), [`/terms`](https://kyroslabs.tech/terms) |
-| Training recipes | [`model/`](./model/) |
-| Kepler 1.1 weights | **Live** — [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1) (Apache 2.0, free) |
+| Kepler 1.2 weights | **Live** — [MAKALY/kepler-1.2](https://huggingface.co/MAKALY/kepler-1.2) |
+| Kepler 1.1 weights | [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1) |
+| 1.3 waitlist | [/waitlist](https://kyroslabs.tech/waitlist) |
 
-## Run the model locally
+## Run locally
 
-See [`docs/RUN_LOCAL.md`](./docs/RUN_LOCAL.md) (Mac-safe pins included).
+See [`docs/RUN_LOCAL.md`](./docs/RUN_LOCAL.md).
 
 ```bash
 pip install "laya>=0.3.0" "numpy<2" "transformers>=4.48.0,<5" "torch==2.2.2"
@@ -44,26 +41,21 @@ pip install "laya>=0.3.0" "numpy<2" "transformers>=4.48.0,<5" "torch==2.2.2"
 
 ```python
 from laya import load
-agent = load("MAKALY/kepler-1.1")
+agent = load("MAKALY/kepler-1.2")
 ```
 
-## Legal (non‑negotiable)
+## Legal
 
-- We **fine-tune Laya** under **Apache 2.0** and keep credit.
-- We are **not** affiliated with TypeSafe AI or Jev.
-- We do **not** copy Jev weights, code, or private data.
+- Fine-tune of Laya under Apache 2.0 — keep credit.  
+- Not affiliated with TypeSafe AI or Jev.  
 - See [`NOTICE`](./NOTICE) and [`docs/LEGAL.md`](./docs/LEGAL.md).
 
-## Run the website locally
+## Run the website
 
 ```bash
 npm install
 npm run dev
 ```
-
-Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
-
-Deploy / domain steps (plain English): [`docs/DEPLOY.md`](./docs/DEPLOY.md).
 
 ## Upstream
 
@@ -73,5 +65,3 @@ Deploy / domain steps (plain English): [`docs/DEPLOY.md`](./docs/DEPLOY.md).
 ## License
 
 Apache License 2.0 — see [`LICENSE`](./LICENSE).
-
-Website content © Kyros Labs / Aly Maknojiya. Model derivatives of Laya retain Apache 2.0 obligations and attribution.

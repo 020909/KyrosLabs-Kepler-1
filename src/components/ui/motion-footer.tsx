@@ -185,7 +185,7 @@ MagneticButton.displayName = "MagneticButton";
 
 const MarqueeItem = () => (
   <div className="flex items-center space-x-12 px-6">
-    <span>Kepler 1.1</span>
+    <span>Kepler 1.2</span>
     <span className="text-signal/70">✦</span>
     <span>Local decisions</span>
     <span className="text-signal/70">✦</span>

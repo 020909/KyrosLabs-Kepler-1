@@ -1,32 +1,21 @@
-# Start here (for Aly — no tech jargon)
+# Start here (for Aly — marketing launch)
 
-## What we are building
+## Live now
 
-1. **Website** at **kyroslabs.tech** for Kyros Labs / Kepler  
-2. **GitHub** people can star and share  
-3. **Kepler 1.1** live — [MAKALY/kepler-1.1](https://huggingface.co/MAKALY/kepler-1.1)  
-4. **Kepler 1.2** next — broader System One (more like Jev), still **$0** on Kaggle  
+1. **Site** — https://kyroslabs.tech (shows **Kepler 1.2** as the flagship)  
+2. **Weights** — https://huggingface.co/MAKALY/kepler-1.2  
+3. **Playground** — /playground  
+4. **1.3 waitlist** — /waitlist (name, email, country)  
+5. **Post copy** — [`docs/MARKETING.md`](./docs/MARKETING.md)  
 
-## Order of operations (now)
+## Your job
 
-1. ~~Site + legal + 1.1 train + launch~~ **done**  
-2. **Train 1.2** — follow [`docs/KAGGLE_1_2_CLICK_BY_CLICK.md`](./docs/KAGGLE_1_2_CLICK_BY_CLICK.md)  
-   - Download `model/notebooks/kepler_1_2_kaggle.ipynb`  
-   - Import to Kaggle, GPU T4×2, Internet On  
-   - Secrets: `HF_TOKEN` + `HF_REPO=MAKALY/kepler-1.2`  
-   - **Run All** (~2–5 hours)  
-3. Paste the Hugging Face link back in Cursor chat  
-4. We wire playground + CLI default to 1.2  
+Post everywhere using the kit in `docs/MARKETING.md`. Lead with 1.2. Point people to the site + HF. Soft-sell the 1.3 waitlist.
 
-Full checklist: [`docs/LAUNCH.md`](./docs/LAUNCH.md) · roadmap: [`docs/KEPLER_ROADMAP.md`](./docs/KEPLER_ROADMAP.md)
+## Optional polish on Hugging Face
 
-## Legal in plain English
+Paste [`model/cards/hf-README-1.2.md`](./model/cards/hf-README-1.2.md) as the model card on https://huggingface.co/MAKALY/kepler-1.2 (same clicks as 1.1 — see `docs/HF_MODEL_CARD_CLICKS.md`, swap the URL).
 
-- Fine-tuning Laya is allowed (Apache 2.0) if we keep credit.  
-- We do not copy Jev or pretend to be TypeSafe.  
-- Privacy + Terms are on the site at `/privacy` and `/terms`.  
+## Story in one line
 
-## Contact on the site
-
-- Email: **hello@kyroslabs.tech**  
-- Founder: Aly Maknojiya, Boston  
+Kepler 1.1 taught coding agents to gate tool calls. **Kepler 1.2 is our most powerful model yet** — open System One. Kepler 1.3 is next; join the waitlist.

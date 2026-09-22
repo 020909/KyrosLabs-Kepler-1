@@ -5,7 +5,8 @@ You already own **kyroslabs.tech**. Do **not** change DNS until the new site is 
 ## Already done for you
 
 - Marketing site + legal pages in this repo  
-- Live free weights: https://huggingface.co/MAKALY/kepler-1.1  
+- Live free weights: https://huggingface.co/MAKALY/kepler-1.2  
+- Prior cut: https://huggingface.co/MAKALY/kepler-1.1  
 - `npm run build` should succeed on this code  
 - Your older Vercel project **`kyros-mainframe`** stays untouched until cutover  
 

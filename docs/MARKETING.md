@@ -1,61 +1,72 @@
-# Marketing kit — Kepler 1.1 launch
+# Marketing kit — Kepler 1.2 launch
 
 **Story line (always use):**  
-Kepler 1.1 from Kyros Labs, built by Aly Maknojiya, a student from Boston.
+Kepler 1.2 from Kyros Labs — our most powerful model yet. Built by Aly Maknojiya, a student from Boston.
 
 **Links**
-- Weights (primary): https://huggingface.co/MAKALY/kepler-1.1  
+- Weights (primary): https://huggingface.co/MAKALY/kepler-1.2  
 - Site: https://kyroslabs.tech  
-- Docs path on site: /docs  
+- Playground: https://kyroslabs.tech/playground  
+- 1.3 waitlist: https://kyroslabs.tech/waitlist  
+- Prior cut: https://huggingface.co/MAKALY/kepler-1.1  
 
 ---
 
 ## X / Twitter (short)
 
 ```
-Kepler 1.1 is live.
+Kepler 1.2 is live.
 
-Open local System One decisions for coding agents:
-allow / ask / deny before shell, files, network.
-Secret tripwire built in.
-
+Our most powerful model yet.
+Open local System One — triage, gates, noul, scores.
 Free Apache weights. Run on your machine.
 
-https://huggingface.co/MAKALY/kepler-1.1
+1.1 taught coding agents to decide.
+1.2 is the full reflex.
 
-Built by Aly Maknojiya (Boston) @ Kyros Labs
+https://huggingface.co/MAKALY/kepler-1.2
+https://kyroslabs.tech
+
+Kyros Labs · Aly Maknojiya (Boston)
 ```
 
 ## LinkedIn / longer
 
 ```
-Today I'm shipping Kepler 1.1 from Kyros Labs.
+Today I'm shipping Kepler 1.2 from Kyros Labs — our most powerful model yet.
 
-Coding agents need a fast babysitter: allow, ask, or deny before a tool runs — and a hard stop when credentials try to leak. That is not a chat problem. It is a typed decision problem.
+Kepler 1.1 was the specialist cut: allow / ask / deny for coding agents, plus a secret tripwire. That proved the open local path.
 
-Kepler 1.1 is an open, local fine-tune of Laya (Apache 2.0). Weights are free on Hugging Face. No usage meter from us.
+Kepler 1.2 expands the surface. Same gates — plus support triage, moderation, and incident noul. Typed decisions your software can branch on, with no chat prose and no vendor meter.
+
+Weights are free on Hugging Face. Playground and CLI are live.
+
+Next: Kepler 1.3 — an order of magnitude beyond. Early access waitlist is open.
+
+Weights: https://huggingface.co/MAKALY/kepler-1.2
+Site: https://kyroslabs.tech
+Waitlist: https://kyroslabs.tech/waitlist
 
 Built by Aly Maknojiya, a student from Boston.
-
-Weights: https://huggingface.co/MAKALY/kepler-1.1
-Site: https://kyroslabs.tech
 ```
 
 ## Hugging Face post / discussion
 
 ```
-Kepler 1.1 — open System One decision model for agent tool gates + secret tripwire.
+Kepler 1.2 — open System One decision model from Kyros Labs.
+
+choice / score / noul · agent gates · support triage · moderation · incident detect
 
 Fine-tuned from convaiinnovations/laya (Apache 2.0) on Kaggle free GPUs.
-pip install laya → load MAKALY/kepler-1.1
+pip install laya → load MAKALY/kepler-1.2
 
-Kyros Labs · Aly Maknojiya (Boston)
+Site: https://kyroslabs.tech
 ```
 
 ## One-liner for bios / Discord
 
 ```
-Kepler 1.1 — free local allow/ask/deny for coding agents. Kyros Labs · Aly Maknojiya
+Kepler 1.2 — free local System One. Kyros Labs · Aly Maknojiya
 ```
 
 ## What not to say
@@ -63,7 +74,12 @@ Kepler 1.1 — free local allow/ask/deny for coding agents. Kyros Labs · Aly Ma
 - Do not claim affiliation with TypeSafe AI or Jev  
 - Do not claim “beats Jev on every benchmark” without published numbers  
 - Do not imply a paid API is required  
+- Do not bury 1.2 — lead with it; mention 1.1 as the prior specialist cut  
 
-## After DNS is live
+## Posting order
 
-Pin the X post. Post on HF discussions. Drop the LinkedIn version once. Reply to agent / open-source threads with the HF link first, site second.
+1. Pin the X post with HF + site links  
+2. HF model discussion  
+3. LinkedIn once  
+4. Reply in agent / open-source threads with HF first, site second  
+5. Point curious folks to `/waitlist` for 1.3  
